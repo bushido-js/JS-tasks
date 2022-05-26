@@ -1,30 +1,78 @@
-let game = document.getElementById('#game');
-let field = document.querySelector('.field');
 
-let size = 5; // два на два
+initGame(document.querySelector('#game'));
 
-let from = 1;
-let to = size**2;
-let arr = []; 
-arr = createArr(from, to);
-arr = shuffleArr(arr);
-arr = chunkArr(arr);
-createCells(arr, field)
-console.log(arr);
+function initGame(game) {
+  let field = game.querySelector('.field');
+  
+  let size = 1; // квадрат
 
-//[[1,2], [3, 4]]
+  newGame();
+  function newGame() {
+    clearGameField(field);
+    let cells = drawGameField(size, field);
+    addActivateHandler(cells);
+  }
+  
+    
+  function addActivateHandler(cells) {
+    let counter = 1; 
+  
+    for (let i = 0; i < cells.length; i++){
+      cells[i].addEventListener('click', function() {
+        if (this.innerHTML == counter){
+          this.classList.add('active');
+            if (counter === size**2) {
+              size++;
+              newGame();
+            }
+        } else if (this.classList != 'active'){
+          size = 1;
+          newGame();
+        }
+          counter++
+        }
+      )
+    }
+  }
+
+}
+
+
+function clearGameField(field) { // Обнуление игры, чтобы не копились
+  field.innerHTML = '';
+}
+
+function drawGameField(size, field) {
+  let from = 1;
+  let to = size**2;
+
+  let arr = []; 
+  arr = createArr(from, to);
+  arr = shuffleArr(arr);
+  arr = chunkArr(arr);
+  return  createCells(arr, field);
+}
+
+
+
+// [[1,2], [3, 4]]
 function createCells(arr, elem) {
+  let cells = []; // Массив со всеми ячейками, для дальнейшей работы игры
+  
   for (let i = 0; i < arr.length; i++){
     let tr = document.createElement('tr');
-    console.log('тут1');
-    for(let j = 0; j < arr[i].lenght; j++){
+
+    for(let j = 0; j < arr[i].length; j++){
       let td = document.createElement('td');
       td.innerHTML = arr[i][j];
-      tr.append(td);
-      console.log('тут');
+      tr.appendChild(td);
+
+      cells.push(td);
     }
-    elem.append(tr);
+
+    elem.appendChild(tr);
   }
+  return cells;
 }
 
 function createArr(from, to) {
